@@ -6,7 +6,7 @@ import 'category.dart';
 import 'card_swiper.dart';
 import 'dialogs.dart';
 import 'locale_provider.dart';
-import 'package:my_web_app/genetated/app_localizations.dart';
+import 'app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -96,8 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void deleteWordCard(int index) {
-    wordCardBox.deleteAt(index);
-    loadCards();
+    final cardToDelete = displayedCards[index];
+    final actualIndex = allCards.indexOf(cardToDelete);
+
+    wordCardBox.deleteAt(actualIndex);
+
+    setState(() {
+      allCards.removeAt(actualIndex);
+      _filterCardsBySearch();
+    });
   }
 
   void deleteCategory(String categoryName) {
@@ -186,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              title: Text(AppLocalizations.of(context).favorites), // Используйте новый перевод
+              title: Text(AppLocalizations.of(context).favorites),
               onTap: () {
                 Navigator.pop(context);
                 setState(() {

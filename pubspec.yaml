@@ -36,3 +36,6 @@ flutter:
 
   assets:
     - assets/initial_data.json
+    - assets/en_german_initial_data.json
+    - assets/german_russian_initial_data.json
+    - assets/ukrainian_german_initial_data.json

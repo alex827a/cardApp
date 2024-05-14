@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'category.dart';
 import 'word_card.dart';
-import 'package:my_web_app/genetated/app_localizations.dart';
+import 'app_localizations.dart';
 
 void showAddCardDialog(BuildContext context, List<Category> categories, String currentCategory, Function(WordCard) addWordCard) {
   TextEditingController germanController = TextEditingController();
@@ -184,6 +184,12 @@ void showEditCardDialog(BuildContext context, int index, WordCard card, Function
                   ),
                 );
                 Navigator.of(context).pop();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Пожалуйста, заполните все поля'),
+                  ),
+                );
               }
             },
           ),

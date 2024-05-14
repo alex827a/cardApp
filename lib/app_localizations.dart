@@ -30,7 +30,7 @@ class AppLocalizations {
       'delete_category_confirm': "Are you sure you want to delete the category '{category}' and all its words?",
       'edit_card': 'Edit Card',
       'german_word': 'German Word',
-      'russian_word': 'English Word',
+      'russian_word': 'Russian Word',
       'category': 'Category',
       'cancel': 'Cancel',
       'save': 'Save',
