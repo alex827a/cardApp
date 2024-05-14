@@ -1,0 +1,38 @@
+name: my_web_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  idb_shim: ^2.0.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  cupertino_icons: ^1.0.6
+  flip_card: ^0.5.0
+  card_swiper: ^1.0.4
+  shared_preferences: ^2.0.5
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.18.1
+  provider: ^6.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  hive_generator: ^2.0.1
+  build_runner: ^2.1.2
+  analyzer: ^6.0.0
+  intl_utils: ^2.8.7
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/initial_data.json
