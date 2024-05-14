@@ -20,19 +20,21 @@ class _HomeScreenState extends State<HomeScreen> {
   List<WordCard> displayedCards = [];
   List<Category> categories = [];
   String currentCategory = 'Все категории';
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     loadCards();
     loadCategories();
+    searchController.addListener(_filterCardsBySearch);
   }
 
   void loadCards() async {
     wordCardBox = Hive.box<WordCard>('wordCards');
     allCards = wordCardBox.values.toList();
     setState(() {
-      displayedCards = allCards;
+      _filterCardsBySearch();
     });
     print("Загружено карточек: ${allCards.length}");
   }
@@ -48,10 +50,32 @@ class _HomeScreenState extends State<HomeScreen> {
   void filterCards(String category) {
     setState(() {
       currentCategory = category;
-      if (category == 'Все категории') {
-        displayedCards = allCards;
+      _filterCardsBySearch();
+    });
+  }
+
+  void _filterCardsBySearch() {
+    final query = searchController.text.toLowerCase();
+    setState(() {
+      displayedCards = allCards.where((card) {
+        final matchCategory = currentCategory == 'Все категории' ||
+            (currentCategory == 'Избранные' && card.isFavorite) ||
+            card.category == currentCategory;
+        final matchSearch = card.german.toLowerCase().contains(query) ||
+            card.russian.toLowerCase().contains(query);
+        return matchCategory && matchSearch;
+      }).toList();
+    });
+  }
+
+  void toggleFavorite(WordCard card) {
+    card.isFavorite = !card.isFavorite;
+    card.save();
+    setState(() {
+      if (currentCategory == 'Избранные' && !card.isFavorite) {
+        displayedCards.remove(card);
       } else {
-        displayedCards = allCards.where((card) => card.category == category).toList();
+        _filterCardsBySearch();
       }
     });
   }
@@ -94,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() async {
     await wordCardBox.close();
     await categoryBox.close();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -161,6 +186,16 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
+              title: Text(AppLocalizations.of(context).favorites), // Используйте новый перевод
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  currentCategory = 'Избранные';
+                  displayedCards = allCards.where((card) => card.isFavorite).toList();
+                });
+              },
+            ),
+            ListTile(
               title: Text(AppLocalizations.of(context).add_category),
               onTap: () {
                 Navigator.pop(context);
@@ -170,13 +205,30 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: displayedCards.isEmpty
-          ? Center(child: Text(AppLocalizations.of(context).no_cards))
-          : CardSwiper(
-              cards: displayedCards,
-              onEditCard: (index, card) => showEditCardDialog(context, index, card, updateWordCard),
-              onDeleteCard: (index) => deleteWordCard(index),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                labelText: 'Поиск',
+                prefixIcon: Icon(Icons.search),
+              ),
             ),
+          ),
+          Expanded(
+            child: displayedCards.isEmpty
+                ? Center(child: Text(AppLocalizations.of(context).no_cards))
+                : CardSwiper(
+                    cards: displayedCards,
+                    onEditCard: (index, card) => showEditCardDialog(context, index, card, updateWordCard),
+                    onDeleteCard: (index) => deleteWordCard(index),
+                    toggleFavorite: toggleFavorite,
+                  ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showAddCardDialog(context, categories, currentCategory, addWordCard),
         tooltip: AppLocalizations.of(context).add_card,

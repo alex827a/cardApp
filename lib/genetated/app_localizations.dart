@@ -35,7 +35,8 @@ class AppLocalizations {
       'cancel': 'Cancel',
       'save': 'Save',
       'delete': 'Delete',
-      'all_categories': 'All Categories' // Добавлено
+      'all_categories': 'All Categories',
+      'favorites': 'Favorites'  // Добавлено
     },
     'ru': {
       'title': 'Немецкий язык',
@@ -52,7 +53,8 @@ class AppLocalizations {
       'cancel': 'Отмена',
       'save': 'Сохранить',
       'delete': 'Удалить',
-      'all_categories': 'Все категории' // Добавлено
+      'all_categories': 'Все категории',
+      'favorites': 'Избранные'  // Добавлено
     },
   };
 
@@ -70,7 +72,8 @@ class AppLocalizations {
   String get cancel => _localizedValues[locale.languageCode]!['cancel']!;
   String get save => _localizedValues[locale.languageCode]!['save']!;
   String get delete => _localizedValues[locale.languageCode]!['delete']!;
-  String get all_categories => _localizedValues[locale.languageCode]!['all_categories']!; // Добавлено
+  String get all_categories => _localizedValues[locale.languageCode]!['all_categories']!;
+  String get favorites => _localizedValues[locale.languageCode]!['favorites']!;  // Добавлено
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -8,11 +8,13 @@ class CardSwiper extends StatelessWidget {
   final List<WordCard> cards;
   final Function(int, WordCard) onEditCard;
   final Function(int) onDeleteCard;
+  final Function(WordCard) toggleFavorite;
 
   CardSwiper({
     required this.cards,
     required this.onEditCard,
     required this.onDeleteCard,
+    required this.toggleFavorite,
   });
 
   @override
@@ -24,11 +26,12 @@ class CardSwiper extends StatelessWidget {
           margin: EdgeInsets.all(8),
           child: Stack(
             children: [
-              FlipCardWidget(card: cards[index]),
+              FlipCardWidget(card: cards[index], toggleFavorite: toggleFavorite),
               Positioned(
                 top: 8,
                 right: 8,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: Icon(Icons.edit),

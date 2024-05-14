@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'category.dart';
 import 'word_card.dart';
-import 'locale_provider.dart';
 import 'package:my_web_app/genetated/app_localizations.dart';
 
 void showAddCardDialog(BuildContext context, List<Category> categories, String currentCategory, Function(WordCard) addWordCard) {
   TextEditingController germanController = TextEditingController();
   TextEditingController russianController = TextEditingController();
-  String selectedCategory = currentCategory == 'Все категории' && categories.isNotEmpty
+  String selectedCategory = currentCategory == 'Все категории' || currentCategory == 'Избранные' && categories.isNotEmpty
       ? categories.first.name
       : currentCategory;
 
@@ -28,19 +26,18 @@ void showAddCardDialog(BuildContext context, List<Category> categories, String c
               controller: russianController,
               decoration: InputDecoration(labelText: AppLocalizations.of(context).russian_word),
             ),
-            if (currentCategory == 'Все категории')
-              DropdownButton<String>(
-                value: selectedCategory,
-                onChanged: (String? newValue) {
-                  selectedCategory = newValue!;
-                },
-                items: categories.map<DropdownMenuItem<String>>((Category category) {
-                  return DropdownMenuItem<String>(
-                    value: category.name,
-                    child: Text(category.name),
-                  );
-                }).toList(),
-              ),
+            DropdownButton<String>(
+              value: selectedCategory,
+              onChanged: (String? newValue) {
+                selectedCategory = newValue!;
+              },
+              items: categories.map<DropdownMenuItem<String>>((Category category) {
+                return DropdownMenuItem<String>(
+                  value: category.name,
+                  child: Text(category.name),
+                );
+              }).toList(),
+            ),
           ],
         ),
         actions: <Widget>[
@@ -58,6 +55,7 @@ void showAddCardDialog(BuildContext context, List<Category> categories, String c
                   german: germanController.text,
                   russian: russianController.text,
                   category: selectedCategory,
+                  isFavorite: currentCategory == 'Избранные',
                 ));
                 Navigator.of(context).pop();
               } else {
@@ -182,6 +180,7 @@ void showEditCardDialog(BuildContext context, int index, WordCard card, Function
                     german: germanController.text,
                     russian: russianController.text,
                     category: categoryController.text,
+                    isFavorite: card.isFavorite,
                   ),
                 );
                 Navigator.of(context).pop();
