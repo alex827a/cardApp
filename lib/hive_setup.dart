@@ -1,3 +1,5 @@
+// lib/hive_setup.dart
+
 import 'package:hive/hive.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';

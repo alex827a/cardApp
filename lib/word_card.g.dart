@@ -20,19 +20,25 @@ class WordCardAdapter extends TypeAdapter<WordCard> {
       german: fields[0] as String,
       russian: fields[1] as String,
       category: fields[2] as String,
+      isFavorite: fields[3] as bool,
+      isFlipped: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, WordCard obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.german)
       ..writeByte(1)
       ..write(obj.russian)
       ..writeByte(2)
-      ..write(obj.category);
+      ..write(obj.category)
+      ..writeByte(3)
+      ..write(obj.isFavorite)
+      ..writeByte(4)
+      ..write(obj.isFlipped);
   }
 
   @override

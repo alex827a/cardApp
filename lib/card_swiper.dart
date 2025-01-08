@@ -1,20 +1,23 @@
+// lib/card_swiper.dart
+
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
-import 'package:flip_card/flip_card.dart';
-import 'word_card.dart';
+import '../word_card.dart';
 import 'flip_card_widget.dart';
 
-class CardSwiper extends StatelessWidget {
+class CardSwiperWidget extends StatelessWidget {
   final List<WordCard> cards;
   final Function(int, WordCard) onEditCard;
   final Function(int) onDeleteCard;
   final Function(WordCard) toggleFavorite;
+  final bool isFlippedGlobally;
 
-  CardSwiper({
+  CardSwiperWidget({
     required this.cards,
     required this.onEditCard,
     required this.onDeleteCard,
     required this.toggleFavorite,
+    required this.isFlippedGlobally,
   });
 
   @override
@@ -26,7 +29,11 @@ class CardSwiper extends StatelessWidget {
           margin: EdgeInsets.all(8),
           child: Stack(
             children: [
-              FlipCardWidget(card: cards[index], toggleFavorite: toggleFavorite),
+              FlipCardWidget(
+                card: cards[index],
+                toggleFavorite: toggleFavorite,
+                isFlippedGlobally: isFlippedGlobally,
+              ),
               Positioned(
                 top: 8,
                 right: 8,

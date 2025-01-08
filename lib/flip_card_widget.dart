@@ -1,15 +1,25 @@
+// lib/flip_card_widget.dart
+
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
-import 'word_card.dart';
+import '../word_card.dart';
 
 class FlipCardWidget extends StatelessWidget {
   final WordCard card;
   final Function(WordCard) toggleFavorite;
+  final bool isFlippedGlobally;
 
-  FlipCardWidget({required this.card, required this.toggleFavorite});
+  FlipCardWidget({
+    required this.card,
+    required this.toggleFavorite,
+    required this.isFlippedGlobally,
+  });
 
   @override
   Widget build(BuildContext context) {
+    String frontText = isFlippedGlobally ? card.russian : card.german;
+    String backText = isFlippedGlobally ? card.german : card.russian;
+
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       front: Container(
@@ -22,8 +32,9 @@ class FlipCardWidget extends StatelessWidget {
           children: [
             Center(
               child: Text(
-                card.german,
-                style: TextStyle(fontSize: 20, color: Colors.black), // Черный цвет текста
+                frontText,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                textAlign: TextAlign.center,
               ),
             ),
             Positioned(
@@ -50,8 +61,9 @@ class FlipCardWidget extends StatelessWidget {
           children: [
             Center(
               child: Text(
-                card.russian,
-                style: TextStyle(fontSize: 20, color: Colors.black), // Черный цвет текста
+                backText,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                textAlign: TextAlign.center,
               ),
             ),
             Positioned(

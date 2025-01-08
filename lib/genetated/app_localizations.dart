@@ -36,7 +36,18 @@ class AppLocalizations {
       'save': 'Save',
       'delete': 'Delete',
       'all_categories': 'All Categories',
-      'favorites': 'Favorites'  // Добавлено
+      'favorites': 'Favorites',
+      'add_single_word': 'Add Single Word', // Новая строка
+      'add_word_list': 'Add Word List',     // Новая строка
+      'enter_category': 'Enter Category',  // Новая строка
+      'word_list_placeholder': 'Example: Hallo:Hello;Danke:Thanks;', // Новая строка
+      'swap_order': 'Swap Word Order',     // Новая строка
+      'upload_words': 'Upload Words',      // Новая строка
+      'category_not_selected': 'Category not selected', // Новая строка
+      'incorrect_format': 'Incorrect format: "{line}"', // Новая строка
+       'please_fill_all_fields': 'Please fill in all fields',
+  'word_added_successfully': 'Word added successfully!',
+  'word_list_added_successfully': 'Word list added successfully!',
     },
     'ru': {
       'title': 'Немецкий язык',
@@ -54,7 +65,18 @@ class AppLocalizations {
       'save': 'Сохранить',
       'delete': 'Удалить',
       'all_categories': 'Все категории',
-      'favorites': 'Избранные'  // Добавлено
+      'favorites': 'Избранные',
+      'add_single_word': 'Добавить одно слово', // Новая строка
+      'add_word_list': 'Добавить список слов',  // Новая строка
+      'enter_category': 'Введите категорию',   // Новая строка
+      'word_list_placeholder': 'Например: Hallo:Привет;Danke:Спасибо;', // Новая строка
+      'swap_order': 'Сменить порядок слов',    // Новая строка
+      'upload_words': 'Загрузить слова',       // Новая строка
+      'category_not_selected': 'Категория не выбрана', // Новая строка
+      'incorrect_format': 'Некорректный формат: "{line}"', // Новая строка
+      'please_fill_all_fields': 'Пожалуйста, заполните все поля',
+      'word_added_successfully': 'Слово успешно добавлено!',
+      'word_list_added_successfully': 'Список слов успешно добавлен!',
     },
   };
 
@@ -73,7 +95,15 @@ class AppLocalizations {
   String get save => _localizedValues[locale.languageCode]!['save']!;
   String get delete => _localizedValues[locale.languageCode]!['delete']!;
   String get all_categories => _localizedValues[locale.languageCode]!['all_categories']!;
-  String get favorites => _localizedValues[locale.languageCode]!['favorites']!;  // Добавлено
+  String get favorites => _localizedValues[locale.languageCode]!['favorites']!;
+  String get add_single_word => _localizedValues[locale.languageCode]!['add_single_word']!; // Новый метод
+  String get add_word_list => _localizedValues[locale.languageCode]!['add_word_list']!;     // Новый метод
+  String get enter_category => _localizedValues[locale.languageCode]!['enter_category']!;  // Новый метод
+  String get word_list_placeholder => _localizedValues[locale.languageCode]!['word_list_placeholder']!; // Новый метод
+  String get swap_order => _localizedValues[locale.languageCode]!['swap_order']!;          // Новый метод
+  String get upload_words => _localizedValues[locale.languageCode]!['upload_words']!;      // Новый метод
+  String get category_not_selected => _localizedValues[locale.languageCode]!['category_not_selected']!; // Новый метод
+  String get incorrect_format => _localizedValues[locale.languageCode]!['incorrect_format']!; // Новый метод
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

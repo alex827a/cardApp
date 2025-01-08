@@ -16,10 +16,14 @@ class WordCard extends HiveObject {
   @HiveField(3)
   bool isFavorite;
 
+  @HiveField(4)
+  bool isFlipped; // Новое поле для переворота
+
   WordCard({
     required this.german,
     required this.russian,
     required this.category,
     this.isFavorite = false,
+    this.isFlipped = false,
   });
 }
