@@ -1,33 +1,156 @@
-# German Vocabulary Learning App
+# my_web_app
 
-## Overview
+# CardApp - Приложение для изучения иностранных слов
 
-This is a Flutter application designed to help users learn and practice German vocabulary. The primary platform for this app is Android. The app features interactive flashcards that users can flip to learn new words, as well as functionalities to add, edit, delete, and categorize their own vocabulary.
+Мобильное приложение для изучения иностранных слов с помощью карточек. Разработано на Flutter с возможностью работы на web, Android и iOS платформах.
 
-## Features
+## Основные возможности
 
-- **Interactive Flashcards**: Flip cards to reveal the translation and learn new German words.
-- **Add Your Own Words**: Easily add new words and translations to your vocabulary list.
-- **Custom Categories**: Organize your vocabulary into custom categories for better management.
-- **Edit and Delete Words**: Modify or remove words from your vocabulary list as needed.
-- **User-friendly Interface**: Simple and intuitive UI for an enhanced learning experience.
+### Управление карточками
+- Создание карточек с парами слов (иностранное ↔ родное)
+- Редактирование существующих карточек
+- Удаление карточек
+- Отметка карточек как избранные
+- Переворачивание карточек (смена языка отображения)
 
-## Technologies Used
+### Категории
+- Создание собственных категорий для группировки слов
+- Управление категориями (добавление/удаление)
+- Фильтрация карточек по категориям
+- Отдельная категория для избранных слов
 
-- **Flutter**: The framework used for building the application.
-- **Dart**: The programming language used in Flutter.
-- **Android**: The primary platform for the app.
+### Импорт и экспорт
+- Загрузка списка слов из текстового файла
+- Поддержка форматов импорта:
+  - TXT файлы с разделителями
+  - CSV файлы
+  - Специальный формат (слово:перевод;)
 
-## Installation
+### Тестирование знаний
+- Два режима тестирования:
+  - Тест с вариантами ответов
+  - Тест с вводом ответа
+- Выбор категории для тестирования
+- Случайный порядок слов
+- Статистика правильных ответов
 
-### Prerequisites
+### Поиск и фильтрация
+- Поиск по словам
+- Фильтрация по категориям
+- Отображение только избранных слов
+- Сортировка карточек
 
-- Flutter SDK: [Install Flutter](https://flutter.dev/docs/get-started/install)
-- Android Studio: [Install Android Studio](https://developer.android.com/studio)
+### Интерфейс
+- Поддержка светлой/темной темы
+- Локализация (русский/английский)
+- Адаптивный дизайн
+- Анимации карточек
+- Удобная навигация
 
-### Steps
+## Технические характеристики
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/yourusername/german-vocabulary-learning-app.git
-   cd german-vocabulary-learning-app
+### Архитектура
+- Flutter/Dart
+- Hive для локального хранения
+- Provider для управления состоянием
+- Чистая архитектура
+- Отдельные сервисы для бизнес-логики
+
+### Особенности реализации
+- Асинхронные операции
+- Кэширование данных
+- Оптимизированная производительность
+- Обработка ошибок
+- Unit и widget тесты
+
+## Установка и запуск
+
+```bash
+# Клонирование репозитория
+git clone https://github.com/username/cardApp.git
+
+# Переход в директорию проекта
+cd cardApp
+
+# Установка зависимостей
+flutter pub get
+
+# Запуск приложения
+flutter run
+
+
+
+
+
+# Сегодняшние изменения и добавления
+
+## 1. Создание нового класса HomeScreenWidgets
+- Выделен отдельный класс для UI компонентов
+- Улучшена организация кода
+- Добавлены все необходимые методы построения UI
+
+## 2. Новые методы в HomeScreenWidgets
+```dart
+- buildLanguageMenu()
+- buildUploadButton()
+- buildTestButton()
+- buildFlipButton()
+- buildAddButton()
+- buildSearchField()
+- buildCardList()
+- buildDrawerHeader()
+- buildCategoryItems()
+- buildDefaultDrawerItems()
+```
+
+## 3. Улучшения в HomeScreen
+- Реорганизована структура кода
+- Добавлены MARK комментарии для лучшей навигации
+- Улучшена инициализация сервисов и данных
+- Добавлен метод `flipAllCards()`
+- Организованы импорты по категориям
+
+## 4. Исправления асинхронных операций
+- Добавлены `await` для асинхронных методов
+- Исправлены возвращаемые типы для методов сервисов
+- Улучшена обработка ошибок
+
+## 5. Улучшения в управлении состоянием
+- Перенесена инициализация виджетов в метод build
+- Исправлено обновление UI при изменении данных
+- Улучшена работа с категориями и карточками
+
+## 6. Добавленные файлы диалогов
+```dart
+- add_word_dialog.dart
+- add_word_list_dialog.dart
+- edit_card_dialog.dart
+- category_dialog.dart
+- test_dialog.dart
+```
+
+## 7. Основные улучшения функциональности
+- Добавление одного слова
+- Добавление списка слов
+- Загрузка слов из файла
+- Управление категориями
+- Поиск по карточкам
+- Переключение языков
+- Тестирование карточек
+
+## 8. Исправленные ошибки
+- Исправлена проблема с DDS при запуске
+- Исправлены ошибки void return type
+- Исправлено обновление категорий
+- Исправлена работа с контекстом
+
+## 9. Улучшения пользовательского интерфейса
+- Добавлены уведомления (SnackBar)
+- Улучшен внешний вид диалогов
+- Добавлены иконки для действий
+- Улучшена навигация по категориям
+
+## 10. Оптимизация производительности
+- Уменьшено количество перестроений виджетов
+- Оптимизирована работа с состоянием
+- Улучшена обработка асинхронных операций

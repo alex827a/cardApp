@@ -1,46 +1,47 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'word_card.dart';
+part of 'word_statistics.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class WordCardAdapter extends TypeAdapter<WordCard> {
+class WordStatisticsAdapter extends TypeAdapter<WordStatistics> {
   @override
-  final int typeId = 0;
+  final int typeId = 2;
 
   @override
-  WordCard read(BinaryReader reader) {
+  WordStatistics read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WordCard(
-      german: fields[0] as String,
-      russian: fields[1] as String,
-      category: fields[2] as String,
-      isFavorite: fields[3] as bool,
-      isFlipped: fields[4] as bool,
-    )..id = fields[5] as String;
+    return WordStatistics(
+      wordId: fields[0] as String,
+      totalAttempts: fields[1] as int,
+      correctAnswers: fields[2] as int,
+      lastAttempt: fields[3] as DateTime,
+      consecutiveCorrectAnswers: fields[4] as int,
+      category: fields[5] as String,
+    );
   }
 
   @override
-  void write(BinaryWriter writer, WordCard obj) {
+  void write(BinaryWriter writer, WordStatistics obj) {
     writer
       ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.german)
+      ..write(obj.wordId)
       ..writeByte(1)
-      ..write(obj.russian)
+      ..write(obj.totalAttempts)
       ..writeByte(2)
-      ..write(obj.category)
+      ..write(obj.correctAnswers)
       ..writeByte(3)
-      ..write(obj.isFavorite)
+      ..write(obj.lastAttempt)
       ..writeByte(4)
-      ..write(obj.isFlipped)
+      ..write(obj.consecutiveCorrectAnswers)
       ..writeByte(5)
-      ..write(obj.id);
+      ..write(obj.category);
   }
 
   @override
@@ -49,7 +50,7 @@ class WordCardAdapter extends TypeAdapter<WordCard> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is WordCardAdapter &&
+      other is WordStatisticsAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
