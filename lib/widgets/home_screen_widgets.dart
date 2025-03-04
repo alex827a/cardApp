@@ -11,12 +11,16 @@ import '../widgets/dialogs/test_dialog.dart';
 import '../services/import_service.dart'; // Добавлен импорт
 import '../widgets/dialogs/add_word_dialog.dart';
 import '../widgets/dialogs/add_word_list_dialog.dart';
+import '../services/backup_service.dart'; // Добавлен импорт
+import '../services/statistics_service.dart';
+import '../models/word_statistics.dart';
 
 class HomeScreenWidgets {
   final BuildContext context;
   final List<Category> categories;
   final List<WordCard> displayedCards;
   final List<WordCard> allCards;
+  final StatisticsService statisticsService;
   bool isFlippedGlobally; // Removed final keyword
   final TextEditingController searchController;
   final CardService cardService;
@@ -28,6 +32,8 @@ class HomeScreenWidgets {
   final Function() loadCategories;
   final Function(WordCard) toggleFavorite;
   final Function(Function()) setState; // Добавлено поле
+  final Function() toggleFlip; // Добавляем новое поле
+  final BackupService backupService; // Add this field
 
   HomeScreenWidgets({
     required this.context,
@@ -45,9 +51,167 @@ class HomeScreenWidgets {
     required this.loadCategories,
     required this.toggleFavorite,
     required this.setState, // Добавлен параметр
+    required this.toggleFlip,
+	  required this.statisticsService,
+    required this.backupService,
   });
 
-  Widget buildLanguageMenu() {
+  // Добавить метод для построения кнопки статистики
+/*   Widget buildStatisticsButton() {
+    return IconButton(
+      icon: Icon(Icons.analytics),
+      tooltip: 'Статистика',
+      onPressed: () => showStatistics(),
+    );
+  } */
+   void showStatistics(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Статистика изучения'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Общая статистика:', style: TextStyle(fontWeight: FontWeight.bold)),
+            _buildCategoryStatistics(),
+            Divider(),
+            Text('Сложные слова:', style: TextStyle(fontWeight: FontWeight.bold)),
+            _buildDifficultWords(),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: Text('Закрыть'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+    ),
+  );
+}
+
+  
+  _buildCategoryStatistics() {
+    Map<String, int> categoryStats = {};
+  Map<String, int> categoryCorrect = {};
+  Map<String, int> categoryTotalWords = {};
+  Map<String, int> categoryTestedWords = {};
+
+  /// Подсчитываем общее количество слов в каждой категории
+  for (var category in categories) {
+    var categoryCards = allCards.where((card) => card.category == category.name);
+    categoryTotalWords[category.name] = categoryCards.length;
+    
+    // Подсчитываем только слова, которые были реально протестированы
+    var testedCards = categoryCards.where((card) {
+      var stats = statisticsService.getWordStatistics(card.id,category.name);
+      // Проверяем, что слово действительно тестировалось и есть попытки
+      return stats['totalAttempts'] != null && 
+             stats['totalAttempts'] > 0 &&
+             stats['correctAnswers'] != null;
+    });
+
+   // Добавляем дополнительную проверку перед подсчетом
+    if (testedCards.isNotEmpty) {
+      categoryTestedWords[category.name] = testedCards.length;
+      
+      // Подсчитываем статистику только для протестированных слов
+      for (var card in testedCards) {
+        var stats = statisticsService.getWordStatistics(card.id);
+        int attempts = ((stats['totalAttempts'] ?? 0) as num).toInt();
+        int correct = ((stats['correctAnswers'] ?? 0) as num).toInt();
+        
+        // Добавляем только если были реальные попытки
+        if (attempts > 0) {
+          categoryStats[category.name] = (categoryStats[category.name] ?? 0) + attempts;
+          categoryCorrect[category.name] = (categoryCorrect[category.name] ?? 0) + correct;
+        }
+      }
+    } else {
+      // Если нет протестированных слов, устанавливаем нулевые значения
+      categoryTestedWords[category.name] = 0;
+      categoryStats[category.name] = 0;
+      categoryCorrect[category.name] = 0;
+    }
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: categories.map((category) {
+      int totalWords = categoryTotalWords[category.name] ?? 0;
+      int testedWords = categoryTestedWords[category.name] ?? 0;
+      int attempts = categoryStats[category.name] ?? 0;
+      int correct = categoryCorrect[category.name] ?? 0;
+
+      // Вычисляем прогресс только если есть протестированные слова
+      double coverageProgress = totalWords > 0 ? testedWords / totalWords : 0;
+      double accuracyProgress = attempts > 0 ? correct / attempts : 0;
+      
+      // Общий прогресс - это произведение охвата и точности
+      double progress = coverageProgress * accuracyProgress;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${category.name} ${testedWords > 0 ? "" : "(не тестировалась)"}',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          LinearProgressIndicator(
+            value: progress,
+            backgroundColor: Colors.grey[200],
+            valueColor: AlwaysStoppedAnimation<Color>(
+              testedWords == 0 ? Colors.grey :
+              progress > 0.7 ? Colors.green : 
+              progress > 0.4 ? Colors.orange : Colors.red
+            ),
+          ),
+          Text(
+            testedWords > 0 
+              ? '${(progress * 100).toStringAsFixed(1)}% ' +
+                '(Изучено ${testedWords}/${totalWords} слов, ' +
+                'успешность: ${(accuracyProgress * 100).toStringAsFixed(1)}%)'
+              : 'Нет данных'
+          ),
+          SizedBox(height: 8),
+        ],
+      );
+    }).toList(),
+  );
+
+}
+
+  Widget _buildDifficultWords() {
+    var difficultWords = allCards.where((card) {
+      var stats = statisticsService.getWordStatistics(card.id);
+      return (stats['successRate'] ?? 1.0) < 0.7 && (stats['totalAttempts'] ?? 0) > 0;
+    }).toList();
+
+    difficultWords.sort((a, b) {
+      var statsA = statisticsService.getWordStatistics(a.id);
+      var statsB = statisticsService.getWordStatistics(b.id);
+      return (statsA['successRate'] ?? 1.0).compareTo(statsB['successRate'] ?? 1.0);
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: difficultWords.take(5).map((card) {
+        var stats = statisticsService.getWordStatistics(card.id);
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text('${card.german} - ${card.russian}'),
+          subtitle: Text(
+            'Успешность: ${((stats['successRate'] ?? 0) * 100).toStringAsFixed(1)}% ' +
+            '(${stats['correctAnswers']}/${stats['totalAttempts']})'
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget showLanguageMenu(BuildContext context) {
     return PopupMenuButton<Locale>(
       onSelected: (locale) {
         // Implement language change logic
@@ -64,6 +228,31 @@ class HomeScreenWidgets {
       ],
     );
   }
+
+  Widget buildLanguageMenu() {
+  return AlertDialog(
+    title: Text('Выберите язык'),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: Text('Русский'),
+          onTap: () {
+            // Логика смены языка
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          title: Text('English'),
+          onTap: () {
+            // Логика смены языка
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
 
   Widget buildDrawerHeader(AppLocalizations localizations) {
     return DrawerHeader(
@@ -88,6 +277,68 @@ class HomeScreenWidgets {
       },
     );
   }
+
+  Widget buildBackupButton() {
+  return PopupMenuButton(
+    icon: Icon(Icons.backup),
+    itemBuilder: (context) => [
+      PopupMenuItem(
+        value: 'export',
+        child: ListTile(
+          leading: Icon(Icons.upload),
+          title: Text('Экспортировать данные'),
+        ),
+      ),
+      PopupMenuItem(
+        value: 'import',
+        child: ListTile(
+          leading: Icon(Icons.download),
+          title: Text('Импортировать данные'),
+        ),
+      ),
+    ],
+    onSelected: (value) async {
+      final backupService = BackupService();
+      
+      if (value == 'export') {
+        await backupService.exportData(categories, allCards);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Данные успешно экспортированы')),
+        );
+      } else if (value == 'import') {
+        final data = await backupService.importData();
+        if (data != null) {
+          // Очистить текущие данные
+          await categoryService.clearAll();
+          await cardService.clearAll();
+
+          // Импортировать новые данные
+          final categories = data['categories'];
+          if (categories != null) {
+            for (var category in categories) {
+              await categoryService.addCategory(category);
+            }
+          }
+          
+          final cards = data['cards'];
+          if (cards != null) {
+            for (var card in cards) {
+              await cardService.addCard(card);
+            }
+          }
+
+          // Обновить UI
+          loadCategories();
+          loadCards();
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Данные успешно импортированы')),
+          );
+        }
+      }
+    },
+  );
+}
 
   List<Widget> buildCategoryItems() {
     return categories
@@ -168,72 +419,94 @@ class HomeScreenWidgets {
         allCards: allCards,
         displayedCards: displayedCards,
         isFlippedGlobally: isFlippedGlobally,
+        currentCategory: currentCategory, 
       );
     },
   );
 }
- Widget buildUploadButton() {
-    return IconButton(
-      icon: Icon(Icons.upload_file),
-      tooltip: 'Загрузить слова',
-      onPressed: () async {
-        String? categoryName = await showCategorySelectDialog(
-          context: context,
-          categories: categories,
-          title: 'Выберите категорию',
-        );
-
-        if (categoryName != null && categoryName.trim().isNotEmpty) {
-          if (!categoryService.categoryExists(categoryName)) {
-            await categoryService.addCategory(Category(name: categoryName)); // Добавлен await
-            loadCategories();
-          }
-
-          String? fileContent = await importService.pickAndReadFile();
-          if (fileContent != null) {
-            List<WordCard> newCards = await importService.parseWordsFromText(
-              fileContent,
-              categoryName,
-              isFlippedGlobally,
+Widget buildUploadButton() {  // Переименовываем метод для консистентности
+  return PopupMenuButton(
+    icon: Icon(Icons.upload_file),
+    tooltip: 'Загрузить слова',
+    itemBuilder: (context) => [
+      PopupMenuItem(
+        child: ListTile(
+          leading: Icon(Icons.add_to_photos),
+          title: Text('Добавить одно слово'),
+          onTap: () async {
+            Navigator.pop(context);
+            WordCard? newCard = await showAddWordDialog(
+              context: context,
+              categories: categories,
+              currentCategory: currentCategory,
+              isFlippedGlobally: isFlippedGlobally,
             );
             
-            for (var card in newCards) {
-              await cardService.addCard(card);
+            if (newCard != null) {
+              await cardService.addCard(newCard);
+              await loadCards();
             }
-            
-            loadCards();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Слова успешно загружены!')),
+          },
+        ),
+      ),
+      PopupMenuItem(
+        child: ListTile(
+          leading: Icon(Icons.upload_file),
+          title: Text('Загрузить список слов'),
+          onTap: () async {
+            Navigator.pop(context);
+            String? categoryName = await showCategorySelectDialog(
+              context: context,
+              categories: categories,
+              title: 'Выберите категорию',
             );
-          }
-        }
+
+            if (categoryName != null && categoryName.trim().isNotEmpty) {
+              if (!categoryService.categoryExists(categoryName)) {
+                await categoryService.addCategory(Category(name: categoryName));
+                loadCategories();
+              }
+
+              String? fileContent = await importService.pickAndReadFile();
+              if (fileContent != null) {
+                List<WordCard> newCards = await importService.parseWordsFromText(
+                  fileContent,
+                  categoryName,
+                  isFlippedGlobally,
+                );
+                
+                for (var card in newCards) {
+                  await cardService.addCard(card);
+                }
+                
+                loadCards();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Слова успешно загружены!')),
+                );
+              }
+            }
+          },
+        ),
+      ),
+    ],
+  );
+}
+ Widget buildFlipButton() {
+    return IconButton(
+      icon: Icon(Icons.swap_horiz),
+      tooltip: 'Изменить порядок слов',
+      onPressed: () {
+        toggleFlip();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isFlippedGlobally
+                ? 'Порядок слов изменен: родное → иностранное'
+                : 'Порядок слов изменен: иностранное → родное'),
+          ),
+        );
       },
     );
   }
-
-Widget buildFlipButton() {
-  return IconButton(
-    icon: Icon(Icons.swap_horiz),
-    tooltip: 'Изменить порядок слов',
-    onPressed: () async {
-      setState(() {
-        isFlippedGlobally = !isFlippedGlobally;
-        for (var card in cardService.getCardsByCategory(currentCategory)) {
-          card.isFlipped = isFlippedGlobally;
-          card.save();
-        }
-      });
-      loadCards();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(isFlippedGlobally
-              ? 'Порядок слов изменен: родное → иностранное'
-              : 'Порядок слов изменен: иностранное → родное'),
-        ),
-      );
-    },
-  );
-}
 
 Widget buildAddButton() {
   return FloatingActionButton(
@@ -324,6 +597,66 @@ Widget buildAddButton() {
     await cardService.deleteCard(cardToDelete);
     loadCards();
   }
+
+
+  void showBackupOptions(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Резервное копирование'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: Icon(Icons.file_download),
+            title: Text('Экспортировать данные'),
+            onTap: () async {
+              Navigator.pop(context);
+              await backupService.exportData(categories, allCards);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Данные успешно экспортированы')),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.file_upload),
+            title: Text('Импортировать данные'),
+            onTap: () async {
+              Navigator.pop(context);
+              final data = await backupService.importData();
+              if (data != null) {
+                // Очистить текущие данные
+                await categoryService.clearAll();
+                await cardService.clearAll();
+
+                // Импортировать новые данные
+                final categories = data['categories'];
+                final cards = data['cards'];
+                
+                if (categories != null) {
+                  for (var category in categories) {
+                    await categoryService.addCategory(category);
+                  }
+                }
+                if (cards != null) {
+                  for (var card in cards) {
+                    await cardService.addCard(card);
+                  }
+                }
+                
+                loadCards();
+                loadCategories();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Данные успешно импортированы')),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   void _handleDeleteCategory(Category category) {
      showDeleteCategoryDialog(

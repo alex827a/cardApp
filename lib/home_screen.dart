@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' as flutter;
-import 'package:provider/provider.dart';
+
 import 'package:hive/hive.dart';
 import 'package:my_web_app/genetated/app_localizations.dart';
 
@@ -9,27 +8,23 @@ import 'word_card.dart';
 import 'category.dart';
 
 // Widgets
-import 'card_swiper.dart';
 
-// Providers
-import 'locale_provider.dart';
 
 // Screens
-import 'quiz_screen.dart';
-import 'write_answer_quiz_screen.dart';
 
 // Services
 import 'services/card_service.dart';
 import 'services/category_service.dart';
 import 'services/import_service.dart';
 
-// Dialogs
-import 'widgets/dialogs/add_word_dialog.dart';
-import 'widgets/dialogs/add_word_list_dialog.dart';
-import 'widgets/dialogs/edit_card_dialog.dart';
-import 'widgets/dialogs/category_dialog.dart';
-import 'widgets/dialogs/test_dialog.dart';
+import 'services/backup_service.dart';
+
+
 import 'widgets/home_screen_widgets.dart';
+
+import 'services/statistics_service.dart';
+
+import 'models/word_statistics.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -138,6 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
       displayedCards: displayedCards,
       allCards: allCards,
       isFlippedGlobally: isFlippedGlobally,
+	    toggleFlip: toggleFlip, 
       searchController: searchController,
       cardService: cardService,
       categoryService: categoryService,
@@ -148,18 +144,75 @@ class _HomeScreenState extends State<HomeScreen> {
       loadCategories: loadCategories,
       toggleFavorite: toggleFavorite,
       setState: setState,
+      statisticsService: StatisticsService(Hive.box<WordStatistics>('wordStats')),
+      backupService: BackupService(),
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.title),
-        actions: [
-          widgets.buildLanguageMenu(),
-          widgets.buildUploadButton(),
-          widgets.buildTestButton(),
-          widgets.buildFlipButton(),
+       appBar: AppBar(
+    title: Text(localizations.title),
+    actions: [
+      // Оставляем только основные кнопки
+      widgets.buildFlipButton(),
+      widgets.buildTestButton(),
+      // Добавляем меню настроек
+      PopupMenuButton(
+        icon: Icon(Icons.settings),
+        tooltip: 'Настройки',
+   itemBuilder: (context) => [
+              PopupMenuItem(
+                child: ListTile(
+                  leading: Icon(Icons.language),
+                  title: Text('Язык'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => widgets.buildLanguageMenu(),
+                    );
+                  },
+                ),
+              ),
+              PopupMenuItem(
+                child: ListTile(
+                  leading: Icon(Icons.file_upload),
+                  title: Text('Управление словами'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Управление словами'),
+                        content: widgets.buildUploadButton(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+           PopupMenuItem(
+            child: ListTile(
+              leading: Icon(Icons.analytics),
+              title: Text('Статистика'),
+              onTap: () {
+                Navigator.pop(context);
+                widgets.showStatistics(context); // Call the method directly
+              },
+            ),
+          ),
+              PopupMenuItem(
+                child: ListTile(
+                  leading: Icon(Icons.backup),
+                  title: Text('Резервное копирование'),
+                   onTap: () {
+                    Navigator.pop(context);
+                    widgets.showBackupOptions(context); // Direct method call instead of building button
+                  },
+                ),
+              ),
         ],
       ),
+    ],
+  ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -179,4 +232,16 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: widgets.buildAddButton(),
     );
   }
+
+  // В классе _HomeScreenState добавим метод:
+void toggleFlip() {
+  setState(() {
+    isFlippedGlobally = !isFlippedGlobally;
+    for (var card in cardService.getCardsByCategory(currentCategory)) {
+      card.isFlipped = isFlippedGlobally;
+      card.save();
+    }
+    loadCards();
+  });
+}
 }

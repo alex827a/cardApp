@@ -36,4 +36,9 @@ class CategoryService {
   bool categoryExists(String categoryName) {
     return getAllCategories().any((c) => c.name == categoryName);
   }
+
+ 
+  Future<void> clearAll() async {
+    await categoryBox.clear();
+  }
 }

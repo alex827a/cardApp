@@ -21,7 +21,7 @@ class AppLocalizations {
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
-      'title': 'German Language',
+      'title': 'My Vocab',
       'categories': 'Categories',
       'add_card': 'Add Card',
       'add_category': 'Add Category',

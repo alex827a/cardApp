@@ -58,4 +58,7 @@ class CardService {
       wordCardBox.deleteAt(actualIndex);
     }
   }
+   Future<void> clearAll() async {
+    await wordCardBox.clear();
+  }
 }

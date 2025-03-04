@@ -22,6 +22,8 @@ dependencies:
   intl: ^0.18.1
   provider: ^6.0.3
   file_picker: ^5.0.0
+  share_plus: ^7.2.1
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:
