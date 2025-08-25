@@ -39,7 +39,6 @@ Built with **Flutter** and available on **Web, Android, and iOS**.
 - Sort flashcards
 
 ### 🎨 User Interface
-- Light/Dark theme support
 - English and Russian localization
 - Responsive design
 - Card flip animations
