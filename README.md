@@ -1,96 +1,127 @@
-# my_web_app
+CardApp – Foreign Language Flashcards
 
-# CardApp - Приложение для изучения иностранных слов
+A mobile application for learning foreign words using flashcards.
+Developed in Flutter, available on Web, Android, and iOS.
 
-Мобильное приложение для изучения иностранных слов с помощью карточек. Разработано на Flutter с возможностью работы на web, Android и iOS платформах.
+Main Features
+Flashcard Management
 
-## Основные возможности
+Create flashcards with word pairs (foreign ↔ native)
 
-### Управление карточками
-- Создание карточек с парами слов (иностранное ↔ родное)
-- Редактирование существующих карточек
-- Удаление карточек
-- Отметка карточек как избранные
-- Переворачивание карточек (смена языка отображения)
+Edit existing flashcards
 
-### Категории
-- Создание собственных категорий для группировки слов
-- Управление категориями (добавление/удаление)
-- Фильтрация карточек по категориям
-- Отдельная категория для избранных слов
+Delete flashcards
 
-### Импорт и экспорт
-- Загрузка списка слов из текстового файла
-- Поддержка форматов импорта:
-  - TXT файлы с разделителями
-  - CSV файлы
-  - Специальный формат (слово:перевод;)
+Mark flashcards as favorites
 
-### Тестирование знаний
-- Два режима тестирования:
-  - Тест с вариантами ответов
-  - Тест с вводом ответа
-- Выбор категории для тестирования
-- Случайный порядок слов
-- Статистика правильных ответов
+Flip cards (switch display language)
 
-### Поиск и фильтрация
-- Поиск по словам
-- Фильтрация по категориям
-- Отображение только избранных слов
-- Сортировка карточек
+Categories
 
-### Интерфейс
-- Поддержка светлой/темной темы
-- Локализация (русский/английский)
-- Адаптивный дизайн
-- Анимации карточек
-- Удобная навигация
+Create custom categories to group words
 
-## Технические характеристики
+Manage categories (add/delete)
 
-### Архитектура
-- Flutter/Dart
-- Hive для локального хранения
-- Provider для управления состоянием
-- Чистая архитектура
-- Отдельные сервисы для бизнес-логики
+Filter flashcards by category
 
-### Особенности реализации
-- Асинхронные операции
-- Кэширование данных
-- Оптимизированная производительность
-- Обработка ошибок
-- Unit и widget тесты
+Separate category for favorite words
 
-## Установка и запуск
+Import & Export
 
-```bash
-# Клонирование репозитория
+Import word lists from text files
+
+Supported formats:
+
+TXT files with delimiters
+
+CSV files
+
+Custom format (word:translation;)
+
+Knowledge Testing
+
+Two test modes:
+
+Multiple choice quiz
+
+Input-based test
+
+Select category for testing
+
+Random word order
+
+Track correct/incorrect answers
+
+Search & Filtering
+
+Search by words
+
+Filter by categories
+
+Show only favorite words
+
+Sort flashcards
+
+User Interface
+
+Light/Dark theme support
+
+Localization (English/Russian)
+
+Responsive design
+
+Card animations
+
+Easy navigation
+
+Technical Details
+Architecture
+
+Flutter/Dart
+
+Hive for local storage
+
+Provider for state management
+
+Clean architecture
+
+Separate services for business logic
+
+Implementation Highlights
+
+Asynchronous operations
+
+Data caching
+
+Optimized performance
+
+Error handling
+
+Unit & widget tests
+
+Installation
+# Clone repository
 git clone https://github.com/username/cardApp.git
 
-# Переход в директорию проекта
+# Enter project directory
 cd cardApp
 
-# Установка зависимостей
+# Install dependencies
 flutter pub get
 
-# Запуск приложения
+# Run the app
 flutter run
 
+Changelog (Today’s Updates)
+1. New HomeScreenWidgets Class
 
+Extracted UI components into a separate class
 
+Improved code organization
 
+Added all required widget builder methods
 
-# Сегодняшние изменения и добавления
-
-## 1. Создание нового класса HomeScreenWidgets
-- Выделен отдельный класс для UI компонентов
-- Улучшена организация кода
-- Добавлены все необходимые методы построения UI
-
-## 2. Новые методы в HomeScreenWidgets
-```dart
+2. New Methods in HomeScreenWidgets
 - buildLanguageMenu()
 - buildUploadButton()
 - buildTestButton()
@@ -101,56 +132,82 @@ flutter run
 - buildDrawerHeader()
 - buildCategoryItems()
 - buildDefaultDrawerItems()
-```
 
-## 3. Улучшения в HomeScreen
-- Реорганизована структура кода
-- Добавлены MARK комментарии для лучшей навигации
-- Улучшена инициализация сервисов и данных
-- Добавлен метод `flipAllCards()`
-- Организованы импорты по категориям
+3. Improvements in HomeScreen
 
-## 4. Исправления асинхронных операций
-- Добавлены `await` для асинхронных методов
-- Исправлены возвращаемые типы для методов сервисов
-- Улучшена обработка ошибок
+Refactored code structure
 
-## 5. Улучшения в управлении состоянием
-- Перенесена инициализация виджетов в метод build
-- Исправлено обновление UI при изменении данных
-- Улучшена работа с категориями и карточками
+Added MARK comments for navigation
 
-## 6. Добавленные файлы диалогов
-```dart
+Improved service/data initialization
+
+Added flipAllCards() method
+
+Organized imports by category
+
+4. Async Operations Fixes
+
+Added await where required
+
+Fixed return types in service methods
+
+Improved error handling
+
+5. State Management Improvements
+
+Moved widget initialization into build
+
+Fixed UI updates on data changes
+
+Improved category & card handling
+
+6. Added Dialog Files
 - add_word_dialog.dart
 - add_word_list_dialog.dart
 - edit_card_dialog.dart
 - category_dialog.dart
 - test_dialog.dart
-```
 
-## 7. Основные улучшения функциональности
-- Добавление одного слова
-- Добавление списка слов
-- Загрузка слов из файла
-- Управление категориями
-- Поиск по карточкам
-- Переключение языков
-- Тестирование карточек
+7. Feature Enhancements
 
-## 8. Исправленные ошибки
-- Исправлена проблема с DDS при запуске
-- Исправлены ошибки void return type
-- Исправлено обновление категорий
-- Исправлена работа с контекстом
+Add single word
 
-## 9. Улучшения пользовательского интерфейса
-- Добавлены уведомления (SnackBar)
-- Улучшен внешний вид диалогов
-- Добавлены иконки для действий
-- Улучшена навигация по категориям
+Add word list
 
-## 10. Оптимизация производительности
-- Уменьшено количество перестроений виджетов
-- Оптимизирована работа с состоянием
-- Улучшена обработка асинхронных операций
+Import words from file
+
+Manage categories
+
+Search flashcards
+
+Switch languages
+
+Test flashcards
+
+8. Bug Fixes
+
+Fixed DDS issue on startup
+
+Fixed void return type errors
+
+Fixed category updates
+
+Fixed context handling
+
+9. UI Improvements
+
+Added notifications (SnackBar)
+
+Improved dialogs look & feel
+
+Added action icons
+
+Enhanced category navigation
+
+10. Performance Optimization
+
+Reduced widget rebuilds
+
+Optimized state management
+
+Improved async handling
